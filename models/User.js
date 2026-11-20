@@ -44,10 +44,11 @@ userSchema.pre("save", async function(next){
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
   next();
-  //Instance method: Lets any user document verify a plain-text password during login
+ 
+})
+ //Instance method: Lets any user document verify a plain-text password during login
   userSchema.method.isCorrectPassword = async function(plainTextPassword){
     return bcrypt.compare(plainTextPassword, this.password);
   };
   const User = model("User", userSchema);
   export default User;
-})
