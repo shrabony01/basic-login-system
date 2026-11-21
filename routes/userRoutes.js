@@ -39,3 +39,41 @@ router.post("/register",async(req,res)=>{
         res.status(500).json({message: "Server error during registration."});
     }
 });
+//USER LOGIN ROUTE
+// Endpoint: POST /api/users/login
+router.post("/login",async(req,res)=>{
+    try{
+        const{email,password} = req.body;
+
+        if(!email || !password){
+            return res
+                .status(400)
+                .json({message: "Please provide both email and password."})
+        }
+        const user = await User.findOne({email: email.toLowerCase() });
+
+        if(!user){
+            return res.status(400).json({ message: "Incorrect email or password." });
+        }
+        const isMatch = await user.isCorrectPassword(password);
+
+        if(!isMatch) {
+            return res.status(400).json({ message: "Incorrect email or password." });
+        }
+        const payload= {
+            _id:user_id,
+            username : user.username,
+        };
+        const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, {
+            expiresIn: "2h",
+
+        });
+        res.status(200).json({
+            token,
+            user,
+        });
+    }catch(err){
+        res.status(500).json({message: "Server error during login. "});
+    }
+});
+export default router;
