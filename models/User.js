@@ -37,17 +37,16 @@ const userSchema = new Schema(
   }
 );
 //  Pre-save middleware (hook): Runs automatically BEFORE a User is saved to MongoDB
-userSchema.pre("save", async function(next){
+userSchema.pre("save", async function(){
   // Only hash the password if it is brand new or was just modified
   if (this.isNew || this.isModified("password")) {
     const saltRounds = 10;
     this.password = await bcrypt.hash(this.password, saltRounds);
   }
-  next();
  
 })
  //Instance method: Lets any user document verify a plain-text password during login
-  userSchema.method.isCorrectPassword = async function(plainTextPassword){
+  userSchema.methods.isCorrectPassword = async function(plainTextPassword){
     return bcrypt.compare(plainTextPassword, this.password);
   };
   const User = model("User", userSchema);

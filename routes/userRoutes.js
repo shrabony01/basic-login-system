@@ -33,10 +33,11 @@ router.post("/register",async(req,res)=>{
         res.status(201).json(newUser);
     }catch(err){
         //handling mongoose errors
+        console.error("Registration error:",err);
         if(err.name === "ValidationError" || err.code === 11000){
             return res.status(400).json({message:err.message});
         }
-        res.status(500).json({message: "Server error during registration."});
+        res.status(500).json({message: "Server error during registration.",error: err.message});
     }
 });
 //USER LOGIN ROUTE
@@ -61,7 +62,7 @@ router.post("/login",async(req,res)=>{
             return res.status(400).json({ message: "Incorrect email or password." });
         }
         const payload= {
-            _id:user_id,
+            _id:user._id,
             username : user.username,
         };
         const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, {

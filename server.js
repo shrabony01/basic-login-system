@@ -7,6 +7,8 @@ import { error } from "node:console";
 
 //dns
 dns.setServers(["1.1.1.1", "8.8.8.8"]);
+const app = express(); // 
+const PORT = process.env.PORT || 3000;
 
 //middleware
 app.use(express.json());
